@@ -26,7 +26,7 @@
     <!-- formularz i wynik -->
     <article id="main">
         <header class="special container">
-            <!--  wstawiamy wynik (jeśli istnieje) -->
+            <!-- wynik (jeśli istnieje) -->
             <?php if (isset($payment)): ?>
                 <div style="text-align: center; margin-bottom: 2em; padding: 1.5em; background: #f3f6fa; border-radius: 8px;">
                     <h3 style="color: #83d3c9; font-size: 1.8em; margin-bottom: 0;">Miesięczna rata:</h3>
@@ -40,13 +40,17 @@
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($error) && $error): ?>
+            <!-- wyświetlanie wszystkich błędów jako listy -->
+            <?php if (!empty($errors)): ?>
                 <div style="text-align: center; margin-bottom: 2em; padding: 1em; background: #ffdddd; border-left: 4px solid #f44336; color: #333;">
-                    <?php echo $error; ?>
+                    <ul style="list-style: disc; padding-left: 1.5em; text-align: left; display: inline-block;">
+                        <?php foreach ($errors as $err): ?>
+                            <li><?php echo $err; ?></li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
             <?php endif; ?>
 
-            <!-- ikona i nagłówek -->
             <span class="icon solid fa-calculator"></span>
             <h2>Kalkulator kredytowy</h2>
             <p>Wpisz dane, a my obliczymy miesięczną ratę.</p>

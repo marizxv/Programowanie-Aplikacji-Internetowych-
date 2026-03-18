@@ -1,43 +1,52 @@
 <?php
 
-// getting parameters, empty values by default
+// pobieranie parametrow, puste jako default
 $loan = $_REQUEST["loan"] ?? "";
 $interest = $_REQUEST["interest"] ?? "";
 $years = $_REQUEST["years"] ?? "";
 $currency = $_REQUEST["currency"] ?? "USD";
 
-$error = "";
+$errors = []; // teraz nie string, a tablica na wszystkie bledy
 $payment = null;
 
-// validation if the form was submitted
+// validacja jezeli formularz przeslany
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_REQUEST['loan'])) {
+    // sprawdzanie pustych pol
+    if ($loan === "") {
+        $errors[] = "Kwota pożyczki jest wymagana.";
+    }
+    if ($interest === "") {
+        $errors[] = "Oprocentowanie jest wymagane.";
+    }
+    if ($years === "") {
+        $errors[] = "Liczba lat jest wymagana.";
+    }
 
-    // checking if any field is empty
-    if ($loan === "" || $interest === "" || $years === "") {
-        $error = "All fields are required.";
-    } else {
-
-        // conversion to numbers with decimals
+    // jesli pole nie jest puste, konwertuje na liczbę i sprawdzamy dodatniość
+    if ($loan !== "") {
         $loan = floatval($loan);
-        $interest = floatval($interest);
-        $years = floatval($years);
-
-        // validating positivity
         if ($loan <= 0) {
-            $error = "Loan amount must be positive.";
-        } elseif ($interest <= 0) {
-            $error = "Interest rate must be positive.";
-        } elseif ($years <= 0) {
-            $error = "Years must be positive.";
-        } else {
-
-            // monthly payment calculation
-            $payment = $loan * $interest / (12 * $years);
+            $errors[] = "Kwota pożyczki musi być LICZBĄ większą od zera.";
         }
     }
-}
+    if ($interest !== "") {
+        $interest = floatval($interest);
+        if ($interest <= 0) {
+            $errors[] = "Oprocentowanie musi być LICZBĄ większą od zera.";
+        }
+    }
+    if ($years !== "") {
+        $years = floatval($years);
+        if ($years <= 0) {
+            $errors[] = "Liczba lat musi być LICZBĄ większą od zera.";
+        }
+    }
 
-//TODO: change the error output, unify languages(oprional);
+    // jesli brak bledow, obliczamy rate (no wrescie)
+    if (empty($errors)) {
+        $payment = $loan * $interest / (12 * $years);
+    }
+}
 
 include "loanCalc2_view.php";
 ?>
