@@ -26,6 +26,18 @@
     <!-- formularz i wynik -->
     <article id="main">
         <header class="special container">
+
+            <!-- najpierw komunikaty informacyjne ("przekazano parametry" i takiego typu) -->
+            {if $infos|count > 0}
+                <div style="text-align: center; margin-bottom: 2em; padding: 1em; background: #d4edda; border-left: 4px solid #28a745; color: #155724;">
+                    <ul style="list-style: none; padding-left: 0; margin: 0;">
+                        {foreach $infos as $info}
+                            <li>{$info}</li>
+                        {/foreach}
+                    </ul>
+                </div>
+            {/if}
+
             <!-- wynik (jeśli istnieje) -->
             {if $payment !== null}
                 <div style="text-align: center; margin-bottom: 2em; padding: 1.5em; background: #f3f6fa; border-radius: 8px;">
@@ -102,6 +114,7 @@
 </div>
 
 <!-- skrypty (jak dobrze, że na razie tam nie muszę nic nawet otwierać) -->
+<!-- upd: już ich nie ma w assets... No i dobrze, no i mam święty spokój bez JS -->
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/jquery.dropotron.min.js"></script>
 <script src="assets/js/jquery.scrolly.min.js"></script>

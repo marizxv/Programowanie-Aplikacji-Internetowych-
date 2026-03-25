@@ -15,62 +15,95 @@ $smarty = new Smarty\Smarty();
 $smarty->setTemplateDir('./');
 $smarty->setCompileDir('./templates_c/');
 
-// pobieranie parametrow, puste jako default
-$loan = $_REQUEST["loan"] ?? "";
-$interest = $_REQUEST["interest"] ?? "";
-$years = $_REQUEST["years"] ?? "";
-$currency = $_REQUEST["currency"] ?? "USD";
+// pobieranie parametrow do tablicy, null jako default
+function getParams(&$form) {
+    $form['loan']      = $_REQUEST['loan'] ?? null;
+    $form['interest']  = $_REQUEST['interest'] ?? null;
+    $form['years']     = $_REQUEST['years'] ?? null;
+    $form['currency']  = $_REQUEST['currency'] ?? 'USD';
+}
 
-$errors = []; // teraz nie string, a tablica na wszystkie bledy
-$payment = null;
-
-// validacja jezeli formularz przeslany
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_REQUEST['loan'])) {
-    // sprawdzanie pustych pol
-    if ($loan === "") {
-        $errors[] = "Kwota pożyczki jest wymagana.";
-    }
-    if ($interest === "") {
-        $errors[] = "Oprocentowanie jest wymagane.";
-    }
-    if ($years === "") {
-        $errors[] = "Liczba lat jest wymagana.";
+// validacja
+function validate(&$form, &$infos, &$messages, &$hide_intro) {
+    // jesli brak ktoregos z trzech pol, formularz nie wyslany
+    if (!isset($form['loan']) || !isset($form['interest']) || !isset($form['years'])) {
+        return false;
     }
 
-    // jesli pole nie jest puste, konwertuje na liczbę i sprawdzamy dodatniość
-    if ($loan !== "") {
-        $loan = floatval($loan);
-        if ($loan <= 0) {
-            $errors[] = "Kwota pożyczki musi być LICZBĄ większą od zera.";
-        }
+    $hide_intro = true; // flaga, ze formularz byl juz pokazywany
+    $infos[] = 'Przekazano parametry.';
+
+    // validacja kwoty
+    if ($form['loan'] == "") {
+        $messages[] = 'Nie podano kwoty pożyczki.';
+    } elseif (!is_numeric($form['loan'])) {
+        $messages[] = 'Kwota pożyczki nie jest liczbą.';
+    } elseif ($form['loan'] <= 0) {
+        $messages[] = 'Kwota pożyczki musi być większa od 0.';
     }
-    if ($interest !== "") {
-        $interest = floatval($interest);
-        if ($interest <= 0) {
-            $errors[] = "Oprocentowanie musi być LICZBĄ większą od zera.";
-        }
+
+    // validacja oprocentowania
+    if ($form['interest'] == "") {
+        $messages[] = 'Nie podano oprocentowania.';
+    } elseif (!is_numeric($form['interest'])) {
+        $messages[] = 'Oprocentowanie nie jest liczbą.';
+    } elseif ($form['interest'] <= 0) {
+        $messages[] = 'Oprocentowanie musi być większe od 0.';
     }
-    if ($years !== "") {
-        $years = floatval($years);
-        if ($years <= 0) {
-            $errors[] = "Liczba lat musi być LICZBĄ większą od zera.";
-        }
+
+    // validacja lat
+    if ($form['years'] == "") {
+        $messages[] = 'Nie podano okresu spłaty.';
+    } elseif (!is_numeric($form['years'])) {
+        $messages[] = 'Okres spłaty nie jest liczbą.';
+    } elseif ($form['years'] <= 0) {
+        $messages[] = 'Okres spłaty musi być większy od 0.';
     }
+
+    // jeli sa bledy zwraca false
+    return empty($messages);
+}
+
+// obliczenia
+function process(&$form, &$infos, &$messages, &$result) {
+    $infos[] = 'Parametry poprawne. Wykonuję obliczenia.';
+
+    // konwersja na liczby
+    $form['loan']     = (float) $form['loan'];
+    $form['interest'] = (float) $form['interest'];
+    $form['years']    = (float) $form['years'];
 
     // jesli brak bledow, obliczamy rate (no wrescie)
-    if (empty($errors)) {
-        $payment = $loan * $interest / (12 * $years);
-    }
+    $payment = $form['loan'] * $form['interest'] / (12 * $form['years']);
+
+    // dodatkowe informacje?
+    $result['rata']       = $payment;
+    $result['kwota']      = $form['loan'];
+    $result['odsetki']    = $form['loan'] * $form['interest'] * $form['years']; // nie wiem, aby bylo
+    $result['kwotaCalkowita'] = $form['loan'] + $result['odsetki'];
+}
+
+// glowna częsc skryptu
+$form     = null;
+$infos    = [];
+$messages = [];
+$result   = [];
+$hide_intro = false;
+
+getParams($form);
+if (validate($form, $infos, $messages, $hide_intro)) {
+    process($form, $infos, $messages, $result);
 }
 
 // Przekazanie zmiennych do szablonu
-$smarty->assign('loan', $loan);
-$smarty->assign('interest', $interest);
-$smarty->assign('years', $years);
-$smarty->assign('currency', $currency);
+$smarty->assign('loan', $form['loan'] ?? '');
+$smarty->assign('interest', $form['interest'] ?? '');
+$smarty->assign('years', $form['years'] ?? '');
+$smarty->assign('currency', $form['currency'] ?? 'USD');
 $smarty->assign('currencies', ['USD'=>'$', 'EUR'=>'€', 'GBP'=>'£', 'JPY'=>'¥', 'PLN'=>'zł']);
-$smarty->assign('errors', $errors);
-$smarty->assign('payment', $payment);
+$smarty->assign('payment',   $result['rata'] ?? null);
+$smarty->assign('errors', $messages);
+$smarty->assign('infos', $infos);
 
 // Wyświetlenie szablonu
 $smarty->display('loanCalc3_view.tpl');
