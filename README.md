@@ -20,7 +20,9 @@ As the semester progresses, this repo will be filled with:
 - [X] Project 2: *Loan Calculator (with a pretty template)*
 - [X] Project 3: *Loan Calculator (with a pretty template AND Smarty)*
 - [X] Project 4: *Loan Calculator (with a pretty template AND Laravel!!! No Smarty)*
-- [ ] Project 5: I assume no longer a calculator? We'll see.
+- [X] Project 5: *Calculator. Again. This time with login!* 
+- [ ] Project 5: I assume no longer a calculator? We'll see. I still have to come up with a proper theme for the project.
+
 
 
 ! Project 2 uses template [Twenty](https://html5up.net/twenty) from [HTML5 UP!](https://html5up.net)
@@ -28,6 +30,14 @@ As the semester progresses, this repo will be filled with:
 ! Project 3 uses [Smarty v5.5.1](https://github.com/smarty-php/smarty/releases/tag/v5.5.1)
 
 ! Project 4 uses Laravel. That's it.
+
+! Project 5 uses hardcoded login system. For a common user:
+- username: user
+- password: user
+  
+For admin (*you won't believe it!*):
+- username: admin
+- password: admin
 
 ## Tech Stack
 
