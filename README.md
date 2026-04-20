@@ -20,9 +20,9 @@ As the semester progresses, this repo will be filled with:
 - [X] Project 2: *Loan Calculator (with a pretty template)*
 - [X] Project 3: *Loan Calculator (with a pretty template AND Smarty)*
 - [X] Project 4: *Loan Calculator (with a pretty template AND Laravel!!! No Smarty)*
-- [X] Project 5: *Calculator. Again. This time with login!* 
-- [ ] Project 5: I assume no longer a calculator? We'll see. I still have to come up with a proper theme for the project.
-
+- [X] Project 5: *Calculator. Again. This time with login! (hardcoded)* 
+- [ ] Project 6: *Calculator. Again. This time with login and a database!*
+- [ ] Project 7: *Plant care diary (WIP)*
 
 
 ! Project 2 uses template [Twenty](https://html5up.net/twenty) from [HTML5 UP!](https://html5up.net)
