@@ -5,20 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Forms\LoginForm;
 use App\Transfer\User;
+use App\Services\Database;
 
 class LoginController extends Controller {
 
-    // hardcoded users, nie wiem nawet jak to bede robic z bazami...
-    // jak sobie wyobrazam, takie informacje najczęsciej przechowuje sie w bazie danych
-    private array $validUsers = [
-        'admin' => ['pass' => 'admin', 'role' => 'admin'],
-        'user'  => ['pass' => 'user',  'role' => 'user'],
-    ];
-
-    // pokazanie formy login
     public function showLogin() {
-        $form = new LoginForm();
-        return view('auth.login', ['form' => $form, 'errors' => []]);
+        return view('auth.login', ['form' => new LoginForm(), 'errors' => []]);
     }
 
     // login form submission
@@ -37,13 +29,15 @@ class LoginController extends Controller {
         }
 
         if (empty($errors)) {
-            // sprawdza credentials dla hardcoded users
-            if (
-                isset($this->validUsers[$form->login]) &&
-                $this->validUsers[$form->login]['pass'] === $form->pass
-            ) {
-                // tworzy User transfer object i serializuuje do session
-                $user = new User($form->login, $this->validUsers[$form->login]['role']);
+            // juz nie sprawdza credentials dla hardcoded users a pyta baze danych
+            $db   = Database::getInstance();
+            $row  = $db->get('users', ['login', 'password', 'role'], [
+                'login' => $form->login
+            ]);
+
+            // $row is null if user not found
+            if ($row && password_verify($form->pass, $row['password'])) {
+                $user = new User($row['login'], $row['role']);
                 session(['user' => serialize($user)]);
 
                 // przekierowanie do calculatora

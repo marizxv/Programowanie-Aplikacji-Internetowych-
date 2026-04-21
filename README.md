@@ -21,7 +21,7 @@ As the semester progresses, this repo will be filled with:
 - [X] Project 3: *Loan Calculator (with a pretty template AND Smarty)*
 - [X] Project 4: *Loan Calculator (with a pretty template AND Laravel!!! No Smarty)*
 - [X] Project 5: *Calculator. Again. This time with login! (hardcoded)* 
-- [ ] Project 6: *Calculator. Again. This time with login and a database!*
+- [X] Project 6: *Calculator. Again. This time with login and a database!*
 - [ ] Project 7: *Plant care diary (WIP)*
 
 
