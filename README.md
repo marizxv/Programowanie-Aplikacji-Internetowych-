@@ -25,7 +25,7 @@ As the semester progresses, this repo will be filled with:
 - [ ] Project 7: *Plant care diary (WIP)*
 
 
-! Project 2 uses template [Twenty](https://html5up.net/twenty) from [HTML5 UP!](https://html5up.net)
+! Projects use template [Twenty](https://html5up.net/twenty) from [HTML5 UP!](https://html5up.net)
 
 ! Project 3 uses [Smarty v5.5.1](https://github.com/smarty-php/smarty/releases/tag/v5.5.1)
 
@@ -43,7 +43,7 @@ For admin (*you won't believe it!*):
 
 - **Frontend:** HTML5, CSS3, JavaScript (oh gods no)
 - **Backend:** PHP (the "P" in "Please Help me" stands for PHP, or more commonly known as *Project Has Problems*)
-- **Database:** Will be added when I figure it out
+- **Database:** ~~Will be added when I figure it out~~ Have been added, but I barely figured it out and would rather not comment.
 
 ```text
             __       / |
