@@ -4,8 +4,25 @@
     <title>Plant Care Diary</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
+    <style>
+        /* przyklejony footer dla krotkich stron — bez tego ucieka do gory po reloadzie */
+        body { margin: 0; }
+        #page-wrapper { display: flex; flex-direction: column; min-height: 100vh; }
+        #main         { flex: 1 0 auto; }
+        #footer       { flex-shrink: 0; }
+
+        /* czytelnosc na jasnym tle headera */
+        #logo a {
+            text-shadow: 0 2px 8px rgb(113, 128, 150);
+        }
+        #nav ul li a,
+        #nav ul li button {
+            color: #fff !important;
+            text-shadow: 0 1px 4px rgb(113, 128, 150);
+        }
+    </style>
 </head>
-<body class="index is-preload">
+<body class="index">
 <div id="page-wrapper">
 
     <header id="header" class="alt">
@@ -28,7 +45,7 @@
     <article id="main">
         <header class="special container">
             <span class="icon solid fa-seedling"></span>
-            <h2>Witaj, {{ $user->nickname }}.</h2>
+            <h2>Witaj, <span style="color:#3fb1a3;">{{ $user->nickname }}</span>.</h2>
 
             @if(!empty($infos))
                 <div style="background:#d4edda;border-left:4px solid #28a745;padding:1em;margin:1em 0;">
