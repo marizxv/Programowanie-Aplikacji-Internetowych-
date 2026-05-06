@@ -23,7 +23,7 @@ it every 7 days."
 
 Users can search and filter in two places. First, in the plant catalogue — filtering by type
 (only show succulents), or searching by name. Second, in their own plant list and care history, such as 
-filtering care logs by date range ("my divine Self wishes to unseal the divine scrolls dated March") 
+filtering care logs by date range ("my divine Self wishes to unseal the forgotten scrolls dated March") 
 or by action type ("show me only watering entries, *for I am no peasant and posses treasurable dihydrogen 
 monoxide!*"). This is especially useful once someone has 10+ plants with dozens of log entries and way 
 too little space for more mental load.
@@ -57,5 +57,40 @@ personal diary enties. ~~Want an own plant? Too bad.~~
 | Search & filter everything | O | O | O |
 
 
-**TODO: add the description of the technical side once done with it (or is it supposed to be in a separate file?
-Guess I'll find out later.)** 
+
+
+# Technical side
+
+## Stack
+
+| Layer | What |
+|---|---|
+| Server | XAMPP on macOS |
+| Backend | PHP 8.2 / Laravel 12 |
+| DB access | [Medoo](https://medoo.in/) | 
+| Database | MySQL 8 (XAMPP) |
+| Sessions | file-backed (`SESSION_DRIVER=file`) |
+| Hashing | bcrypt |
+| Frontend | HTML5 UP *Twenty* + Blade |
+
+## Database
+
+The canonical schema lives in [`plant_diary_ddl.sql`](plant_diary_ddl.sql), written for Oracle.
+
+The **running** database is a port of that DDL to MySQL — the exact same tables and logic, accommodated for 
+MySQL. 
+
+Two Version because the Oracle one is the design artefact graded by the prof (and it was the first thing 
+that came to mind), and the MySQL one is the one I can actually run without Docker, an Oracle account,
+and three hours of my life I'd never get back.
+
+
+## Todo list 
+~~aka someone give me patience~~
+- [ ] Public plant-type catalogue (read-only, visible to guests)
+- [ ] User: add / edit / delete their own plants
+- [ ] User: log a care entry, view their diary, filter by date / action
+- [ ] Admin UI: CRUD for plant types, user / role management (no more phpMyAdmin SQL gymnastics)
+- [ ] Search & filter on both the public catalogue and one's own diary
+- [ ] Cosmetic: a home page that doesn't look like a placeholder (because it currently is one)
+
