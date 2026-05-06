@@ -10,13 +10,13 @@
 <div id="page-wrapper">
 
     <header id="header" class="alt">
-        <h1 id="logo"><a href="/">Kalkulator <span>kredytowy</span></a></h1>
+        <h1 id="logo"><a href="/">Plant <span>Care Diary</span></a></h1>
     </header>
 
     <article id="main">
         <header class="special container">
-            <span class="icon solid fa-lock"></span>
-            <h2>Logowanie</h2>
+            <span class="icon solid fa-leaf"></span>
+            <h2>Logowanie / rejestracja</h2>
 
             @if(!empty($errors))
                 <div style="background:#ffdddd;border-left:4px solid #f44336;padding:1em;margin-bottom:1em;text-align:left;display:inline-block;">
@@ -35,6 +35,11 @@
                     @endforeach
                 </div>
             @endif
+
+            <p style="opacity:0.75;font-size:0.9em;">
+                Pierwszy raz? Po prostu wpisz email i hasło — założymy konto automatycznie.
+            </p>
+
         </header>
 
         <section class="wrapper style4 special container medium">
@@ -43,17 +48,16 @@
                     @csrf
                     <div class="row gtr-50">
                         <div class="col-12">
-                            <input type="text" name="login"
-                                   placeholder="Login"
-                                   value="{{ $form->login ?? '' }}" />
+                            <input type="email" name="email" placeholder="Email"
+                                   value="{{ $form->email ?? '' }}" required />
                         </div>
                         <div class="col-12">
                             <input type="password" name="pass"
-                                   placeholder="Hasło" />
+                                   placeholder="Hasło (min. 6 znaków)" required />
                         </div>
                         <div class="col-12">
                             <ul class="buttons">
-                                <li><input type="submit" class="special" value="Zaloguj się" /></li>
+                                <li><input type="submit" class="special" value="Wejdź" /></li>
                             </ul>
                         </div>
                     </div>
@@ -64,7 +68,7 @@
 
     <footer id="footer">
         <ul class="copyright">
-            <li>&copy; Twój projekt</li>
+            <li>&copy; Plant Care Diary</li>
             <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
         </ul>
     </footer>

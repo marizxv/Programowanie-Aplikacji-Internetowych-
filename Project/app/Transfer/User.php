@@ -3,13 +3,12 @@
 namespace App\Transfer;
 
 class User {
-    public string $login;
-    public string $role;
-
-    public function __construct(string $login, string $role) {
-        $this->login = $login;
-        $this->role = $role;
-    }
+    public function __construct(
+    public string $email,
+    public string $role,
+    public int $id,
+    public string $nickname
+    ){}
 
     public function isAdmin(): bool {
         return $this->role === 'admin';

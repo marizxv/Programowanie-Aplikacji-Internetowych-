@@ -3,6 +3,6 @@
 namespace App\Forms;
 
 class LoginForm {
-    public ?string $login = null;
+    public ?string $email = null;
     public ?string $pass  = null;
 }
