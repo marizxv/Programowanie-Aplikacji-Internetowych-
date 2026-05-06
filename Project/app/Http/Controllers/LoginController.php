@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Forms\LoginForm;
+use App\Forms\NicknameForm;
 use App\Transfer\User;
 use App\Services\Database;
 use Medoo\Medoo;
@@ -27,42 +28,44 @@ class LoginController extends Controller {
         } else {
             if (!$form->email) $errors[] = 'Nie podano adresu email.';
             if (!$form->pass)  $errors[] = 'Nie podano hasła.';
+            elseif (strlen($form->pass) < 6) $errors[] = 'Hasło musi mieć co najmniej 6 znaków.';
+
         }
 
         if (empty($errors)) {
             // pyta baze danych — email zamiast loginu, bo tak chce DDL
-            $db = Database::getInstance();
-            $row = $db->get('users', ['id', 'email', 'nickname', 'password'], [
+            $db   = Database::getInstance();
+            $row  = $db->get('users', ['id', 'email', 'nickname', 'password'], [
                 'email' => $form->email
             ]);
 
-            // $row is null if user not found -> rejestracja
+            // OPCJA 1: nieznany email -> rejestracja, potem na strone od nicku
             if (!$row) {
                 $userId = $this->registerNewUser($db, $form->email, $form->pass);
-                $nickname = $this->nicknameFromEmail($form->email);
-                $user = new User($userId, $form->email, $nickname, 'user');
-                session(['user' => serialize($user)]);
-                return redirect()->route('home')
-                    ->with('infos', ['Oh hej, nowiutki użytkowniku — założyłam Ci konto.']);
+                $this->loginAs(new User(
+                    id:       $userId,
+                    email:    $form->email,
+                    nickname: $this->nicknameFromEmail($form->email),
+                    role:     'user',
+                ));
+                return redirect()->route('nickname.show')
+                    ->with('infos', ['Oh hej, nowiutki użytkowniku — założyłam Ci konto. Wybierz teraz nick.']);
             }
 
-            // istniejacy user, dobre haslo
+            // OPCJA 2: istniejacy user, dobre haslo -> home
             if (password_verify($form->pass, $row['password'])) {
-                $role = $db->get('roles', 'name', [
-                    '[>]user_roles' => ['id' => 'role_id'],
-                    'user_roles.user_id'    => $row['id'],
-                    'user_roles.revoked_at' => null,
-                ]) ?? 'user';
-
-                $user = new User((int) $row['id'], $row['email'], $row['nickname'], $role);
-                session(['user' => serialize($user)]);
-
-                // przekierowanie do home
+                $this->loginAs(new User(
+                    id:       (int) $row['id'],
+                    email:    $row['email'],
+                    nickname: $row['nickname'],
+                    role:     $this->fetchUserRole($db, (int) $row['id']),
+                ));
                 return redirect()->route('home')
                     ->with('infos', ['Witaj z powrotem, '.$row['nickname'].'.']);
-            } else {
-                $errors[] = 'Spróbuj jeszcze raz — tym razem z *prawidłowym* hasłem.';
             }
+
+            // OPTION 3: zle haslo
+            $errors[] = 'Spróbuj jeszcze raz — tym razem z *prawidłowym* hasłem.';
         }
 
         // z powrotem w login z bledami
@@ -79,10 +82,88 @@ class LoginController extends Controller {
         ]);
     }
 
+    // pokazuje formularz wyboru nicku (po rejestracji albo recznie)
+    public function chooseNickname() {
+        $user = unserialize(session('user'));
+        $form = new NicknameForm();
+        $form->nickname = $user->nickname;
+        return view('auth.nickname', [
+            'form'   => $form,
+            'user'   => $user,
+            'errors' => [],
+            'infos'  => (array) session('infos', []),
+        ]);
+    }
+
+    // zapis nicku
+    public function saveNickname(Request $request) {
+        $user = unserialize(session('user'));
+        $form = new NicknameForm();
+        $form->nickname = trim((string) $request->input('nickname'));
+        $errors = [];
+
+        // validate
+        if (!$form->nickname) {
+            $errors[] = 'Nie podano nicku.';
+        } else {
+            if (strlen($form->nickname) > 50)
+                $errors[] = 'Nick nie może być dłuższy niż 50 znaków.';
+            if (preg_replace('/[^a-zA-Z0-9_]/', '', $form->nickname) !== $form->nickname)
+                $errors[] = 'Nick może zawierać tylko litery, cyfry i znak _.';
+        }
+
+        if (empty($errors)) {
+            $db = Database::getInstance();
+
+            // unikalnosc — z wykluczeniem siebie (gdyby nic nie zmienial)
+            $taken = $db->has('users', [
+                'nickname' => $form->nickname,
+                'id[!]' => $user->id,
+            ]);
+
+            if ($taken) {
+                $errors[] = 'Ten nick jest już zajęty.';
+            } else {
+                $db->update('users',
+                    ['nickname' => $form->nickname],
+                    ['id' => $user->id]
+                );
+                $user->nickname = $form->nickname;
+                $this->loginAs($user);
+                return redirect()->route('home')
+                    ->with('infos', ['Nick ustawiony. Witaj, '.$user->nickname.'.']);
+            }
+        }
+
+        return view('auth.nickname', [
+            'form' => $form,
+            'user' => $user,
+            'errors' => $errors,
+            'infos' => [],
+        ]);
+    }
+
     // helpers
 
+    private function loginAs(User $user): void {
+        session(['user' => serialize($user)]);
+    }
+
+    private function fetchUserRole(Medoo $db, int $userId): string {
+        return $db->get(
+            'roles',
+            ['[>]user_roles' => ['id' => 'role_id']],
+            'name',
+            [
+                'user_roles.user_id'    => $userId,
+                'user_roles.revoked_at' => null,
+            ]
+        ) ?? 'user';
+    }
+
     private function registerNewUser(Medoo $db, string $email, string $plainPass): int {
-        return $db->action(function (Medoo $db) use ($email, $plainPass) {
+        $userId = 0;
+        $db->action(function (Medoo $db) use ($email, $plainPass, &$userId) {
             $nickname = $this->uniqueNickname($db, $this->nicknameFromEmail($email));
             $hash     = password_hash($plainPass, PASSWORD_BCRYPT);
 
@@ -102,9 +183,8 @@ class LoginController extends Controller {
                 'user_id' => $userId,
                 'role_id' => (int) $userRole['id'],
             ]);
-
-            return $userId;
         });
+        return $userId;
     }
 
     private function nicknameFromEmail(string $email): string {

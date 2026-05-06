@@ -11,5 +11,7 @@ Route::post('/login', [LoginController::class, 'doLogin'])->name('login.post');
 // protected actions
 Route::middleware('checklogin')->group(function () {
     Route::get('/',         [HomeController::class,  'index'])->name('home');
-    Route::post('/logout',  [LoginController::class, 'doLogout'])->name('logout');
+    Route::get('/nickname', [LoginController::class, 'chooseNickname'])->name('nickname.show');
+    Route::post('/nickname', [LoginController::class, 'saveNickname'])->name('nickname.save');
+    Route::post('/logout',   [LoginController::class, 'doLogout'])->name('logout');
 });

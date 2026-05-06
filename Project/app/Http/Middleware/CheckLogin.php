@@ -19,8 +19,8 @@ class CheckLogin
 
         // jezeli nie ma user-a w session, przekierowuje na login
         // jak w przykladzie Kudlacika zamiast
-        // if ( ! (isset($user) && isset($user->login) && isset($user->role)) )
-        if (!($user instanceof User && isset($user->login) && isset($user->role))) {
+        // if ( ! (isset($user) && isset($user->email) && isset($user->role)) )
+        if (!($user instanceof User && isset($user->email) && isset($user->role))) {
             return redirect()->route('login');
         }
 
