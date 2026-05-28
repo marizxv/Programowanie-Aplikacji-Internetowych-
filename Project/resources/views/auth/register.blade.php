@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Logowanie — Plant Care Diary</title>
+    <title>Rejestracja — Plant Care Diary</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="{{ asset('assets/css/main.css') }}" />
@@ -20,15 +20,15 @@
         <nav id="nav">
             <ul>
                 <li><a href="{{ route('catalogue') }}">Katalog roślin</a></li>
-                <li><a href="{{ route('register') }}">Rejestracja</a></li>
+                <li><a href="{{ route('login') }}">Logowanie</a></li>
             </ul>
         </nav>
     </header>
 
     <article id="main">
         <header class="special container">
-            <span class="icon solid fa-lock"></span>
-            <h2>Logowanie</h2>
+            <span class="icon solid fa-user-plus"></span>
+            <h2>Rejestracja</h2>
 
             @if(!empty($errors))
                 <div style="background:#ffdddd;border-left:4px solid #f44336;padding:1em;margin-bottom:1em;text-align:left;display:inline-block;min-width:300px;">
@@ -39,19 +39,11 @@
                     </ul>
                 </div>
             @endif
-
-            @if(!empty($infos))
-                <div style="background:#d4edda;border-left:4px solid #28a745;padding:1em;margin-bottom:1em;">
-                    @foreach($infos as $info)
-                        <p style="margin:0;color:#155724;">{{ $info }}</p>
-                    @endforeach
-                </div>
-            @endif
         </header>
 
         <section class="wrapper style4 special container medium">
             <div class="content">
-                <form action="{{ route('login.post') }}" method="POST">
+                <form action="{{ route('register.post') }}" method="POST">
                     @csrf
                     <div class="row gtr-50">
                         <div class="col-12">
@@ -61,16 +53,22 @@
                         </div>
                         <div class="col-12">
                             <input type="password" name="pass"
-                                   placeholder="Hasło" required />
+                                   placeholder="Hasło (min. 6 znaków)"
+                                   minlength="6" required />
+                        </div>
+                        <div class="col-12">
+                            <input type="password" name="pass_confirm"
+                                   placeholder="Powtórz hasło"
+                                   minlength="6" required />
                         </div>
                         <div class="col-12">
                             <ul class="buttons">
-                                <li><input type="submit" class="special" value="Zaloguj się" /></li>
+                                <li><input type="submit" class="special" value="Załóż konto" /></li>
                             </ul>
                         </div>
                         <div class="col-12" style="text-align:center;opacity:.75;font-size:.9em;">
-                            Nie masz jeszcze konta?
-                            <a href="{{ route('register') }}">Zarejestruj się tutaj.</a>
+                            Masz już konto?
+                            <a href="{{ route('login') }}">Zaloguj się tutaj.</a>
                         </div>
                     </div>
                 </form>

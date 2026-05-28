@@ -1,59 +1,97 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# *Plant Care Diary — application/project description*
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The application is a personal plant care tracker. The core idea is simple: a user registers,
+adds their houseplants to their account, and keeps a diary of every time they water, fertilise,
+or repot them. Instead of trying to remember when you last watered your monstera (a succulent, in my case), 
+one can open the app and it'd tell them everything.
 
-## About Laravel
+## User's perspective
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+A guest visiting the site can browse a public catalogue of plant types (succulents, tropical plants,
+herbs, etc. – hopes ad prayers I find an actual database )and see general care information 
+— but they can't do anything personal until they register.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Once logged in, a user can add their own plants to their account, giving each one a name 
+(e.g. "my big monstera by the window") and linking it to a plant type from the catalogue. 
+Every time they water or fertilise a plant, they add a care log entry — a short note with a timestamp. 
+Over time this builds up a history: "I watered this plant on the 1st, 8th, and 15th — looks like I'm doing
+it every 7 days." 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+~~Fully depends on one's pattern recognition, now that I think of it.~~
 
-## Learning Laravel
+*! Search and filtering*
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Users can search and filter in two places. First, in the plant catalogue — filtering by type
+(only show succulents), or searching by name. Second, in their own plant list and care history, such as 
+filtering care logs by date range ("my divine Self wishes to unseal the forgotten scrolls dated March") 
+or by action type ("show me only watering entries, *for I am no peasant and posses treasurable dihydrogen 
+monoxide!*"). This is especially useful once someone has 10+ plants with dozens of log entries and way 
+too little space for more mental load.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## The admin's role
 
-## Laravel Sponsors
+The admin *never* interacts with anyone's plants. Their job is purely system management
+— they maintain the plant types catalogue (adding new types like "cactus" or "bonsai",
+deactivating outdated ones), and they manage user accounts (resetting passwords, assigning roles,
+removing accounts if needed).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**The roles in short:**
+- **Guest** — browses the public plant catalogue, registers or logs in;
+- **User** — manages their own plants and care diary;
+- **Admin** — manages plant types (database) and user accounts. Doesn't even touch the creation of one's
+personal diary enties.
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+  
+*So I don't forget:* 
 
-## Contributing
+| Action | Guest | User | Admin |
+|---|---|---|---|
+| Browse public plant catalogue | O | O | O |
+| Register | O | X | X |
+| Add own plants | X | O | X |
+| Log watering / care entries | X | O | X |
+| View own plant diary | X | O | X |
+| Manage plant types (catalogue) | X | X | O |
+| Manage users & roles | X | X | O |
+| Search & filter everything | O | O | O |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
+# Technical side
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Stack
 
-## License
+| Layer | What |
+|---|---|
+| Server | XAMPP on macOS |
+| Backend | PHP 8.2 / Laravel 12 |
+| DB access | [Medoo](https://medoo.in/) | 
+| Database | MySQL 8 (XAMPP) |
+| Sessions | file-backed (`SESSION_DRIVER=file`) |
+| Hashing | bcrypt |
+| Frontend | HTML5 UP *Twenty* + Blade |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Database
+
+The canonical schema lives in [`plant_diary_ddl.sql`](plant_diary_ddl.sql), written for Oracle.
+
+The **running** database is a port of that DDL to MySQL — the exact same tables and logic, accommodated for 
+MySQL. 
+
+Two Version because the Oracle one is the design artefact graded by the prof (and it was the first thing 
+that came to mind), and the MySQL one is the one I can actually run without Docker, an Oracle account,
+and three hours of my life I'd never get back.
+
+
+## Todo list 
+~~aka someone give me patience~~
+- [x] Public plant-type catalogue (read-only, visible to guests)
+- [x] User: add / edit / delete their own plants
+- [x] User: log a care entry, view their diary, filter by date / action
+- [x] Admin UI: CRUD for plant types, user / role management (no more phpMyAdmin SQL gymnastics)
+- [ ] Admin *working* UI: connection to the database, actual user manipulation
+- [x] Search & filter on both the public catalogue and one's own diary
+- [x] Cosmetic: a home page that doesn't look like a placeholder.
+- [ ] Optional: a prettier filtrering
