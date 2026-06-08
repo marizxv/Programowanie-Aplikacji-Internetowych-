@@ -11,8 +11,17 @@
         #main { flex: 1 0 auto; }
         #footer { flex-shrink: 0; }
         #logo a { text-shadow: 0 2px 8px rgba(0,0,0,.3); }
-        #nav ul li a, #nav ul li button { color: #fff !important; text-shadow: 0 1px 4px rgba(0,0,0,.25); }
+        #nav ul li a, #nav ul li button { color: rgba(160, 174, 192, 0.8) !important; text-shadow: 0 1px 4px rgb(213, 253, 250); }
         .hint { font-size: .8em; opacity: .6; margin-top: .3em; }
+        /* override Twenty: buttony skalują się do tekstu */
+        input[type=submit].special,
+        input[type=submit].special.small,
+        .button.special,
+        .button.small,
+        .button {
+            min-width: 0 !important; width: auto !important;
+            padding: .55em 1.5em !important; white-space: nowrap;
+        }
     </style>
 </head>
 <body class="index">

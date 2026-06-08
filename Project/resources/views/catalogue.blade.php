@@ -12,8 +12,8 @@
         #footer { flex-shrink: 0; }
         #logo a { text-shadow: 0 2px 8px rgba(0,0,0,.3); }
         #nav ul li a, #nav ul li button {
-            color: #fff !important;
-            text-shadow: 0 1px 4px rgba(0,0,0,.25);
+            color: rgba(160, 174, 192, 0.8) !important;
+            text-shadow: 0 1px 4px rgb(213, 253, 250);
         }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 1em; }
         .data-table th {
@@ -31,9 +31,27 @@
         .filter-bar { display: flex; gap: 1em; flex-wrap: wrap; align-items: flex-end; margin-bottom: 1.5em; }
         .filter-bar > div { display: flex; flex-direction: column; gap: .3em; flex: 1; min-width: 180px; }
         .filter-bar label { font-size: .78em; text-transform: uppercase; letter-spacing: .1em; opacity: .6; }
-        .filter-bar select, .filter-bar input[type=text] { margin: 0; }
+        .filter-bar select, .filter-bar input[type=text] { margin: 0; text-align: center; }
         .empty-state { text-align: center; padding: 3em 1em; opacity: .5; }
         .empty-state .icon { font-size: 3em; display: block; margin-bottom: .4em; }
+        /* buttony filtra — wlasny styl, omija syf Twenty */
+        .filter-btn {
+            display: inline-block !important;
+            width: auto !important;
+            min-width: 0 !important;
+            padding: .65em 1.4em !important;
+            border-radius: 4px; font-size: .85em; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .08em;
+            text-align: center;
+            cursor: pointer; white-space: nowrap;
+            text-decoration: none; line-height: 1;
+            border: 1px solid transparent;
+            font-family: inherit;
+        }
+        .filter-btn-primary { background: #3fb1a3; color: #fff; border-color: #3fb1a3; }
+        .filter-btn-primary:hover { background: #2a9d8f; }
+        .filter-btn-ghost   { background: none; color: inherit; border-color: rgba(0,0,0,.18); }
+        .filter-btn-ghost:hover { background: rgba(0,0,0,.04); }
     </style>
 </head>
 <body class="index">
@@ -75,8 +93,8 @@
             <p style="opacity:.65;">Ogólne informacje o typach roślin i zaleceniach pielęgnacyjnych.</p>
 
             @if(!$user)
-                <div style="background:rgba(63,177,163,.12);border:1px solid rgba(63,177,163,.3);border-radius:6px;padding:.9em 1.2em;display:inline-block;margin-top:.5em;font-size:.9em;">
-                    <span class="icon solid fa-info-circle" style="color:#3fb1a3;margin-right:.4em;"></span>
+                <div style="background:rgba(63,177,163,.12);border:1px solid rgba(63,177,163,.3);border-radius:6px;padding:.9em 1.2em;display:inline-block;margin-top:5.5em;font-size:.9em;">
+                    <span class="icon solid fa-info-circle" style="color:#3fb1a3;margin-right:.4em;margin-top:15em;"></span>
                     <a href="{{ route('register') }}">Zarejestruj się</a> lub
                     <a href="{{ route('login') }}">zaloguj się</a>, żeby dodawać własne rośliny i prowadzić pamiętnik.
                 </div>
@@ -95,9 +113,9 @@
                                placeholder="np. Sukulenty..."
                                value="{{ $search ?? '' }}" />
                     </div>
-                    <div style="flex:0;min-width:140px;">
+                    <div style="flex:0;min-width:230px;">
                         <label>Podlewanie</label>
-                        <select name="watering">
+                        <select name="watering" style="width:100%; text-align: center; text-align-last: center;">
                             <option value="">Wszystkie</option>
                             <option value="frequent" {{ ($wateringFilter ?? '') === 'frequent' ? 'selected' : '' }}>
                                 Częściej niż co tydzień
@@ -107,13 +125,11 @@
                             </option>
                         </select>
                     </div>
-                    <div style="flex:0;align-items:flex-end;">
-                        <ul class="buttons" style="margin:0;">
-                            <li><input type="submit" class="special small" value="Szukaj" /></li>
-                            @if(!empty($search) || !empty($wateringFilter))
-                                <li><a href="{{ route('catalogue') }}" class="button small">Wyczyść</a></li>
-                            @endif
-                        </ul>
+                    <div style="flex:0;align-items:flex-end;gap:.4em;">
+                        @if(!empty($search) || !empty($wateringFilter))
+                            <a href="{{ route('catalogue') }}" class="filter-btn filter-btn-ghost">Wyczyść</a>
+                        @endif
+                        <button type="submit" class="filter-btn filter-btn-primary">Szukaj</button>
                     </div>
                 </div>
                 </form>

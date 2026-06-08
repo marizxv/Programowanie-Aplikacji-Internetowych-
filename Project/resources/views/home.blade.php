@@ -15,8 +15,8 @@
         /* czytelnosc na jasnym tle headera */
         #logo a { text-shadow: 0 2px 8px rgb(113, 128, 150); }
         #nav ul li a, #nav ul li button {
-            color: #fff !important;
-            text-shadow: 0 1px 4px rgb(113, 128, 150);
+            color: rgba(160, 174, 192, 0.8) !important;
+            text-shadow: 0 1px 4px rgb(213, 253, 250);
         }
 
         /* karty dashboardu */
@@ -30,7 +30,7 @@
         }
         .dash-card:hover { background: rgba(63,177,163,.2); transform: translateY(-4px); color: inherit; }
         .dash-card .card-icon { font-size: 2.4em; color: #3fb1a3; display: block; margin-bottom: .5em; }
-        .dash-card h3 { margin: .4em 0 .5em; color: #fff; font-size: 1.05em; }
+        .dash-card h3 { margin: .4em 0 .5em; color: #3da99c; font-size: 1.05em; }
         .dash-card p  { font-size: .82em; opacity: .65; margin: 0; line-height: 1.5; }
         .admin-card .card-icon { color: #e6a817; }
         .admin-card:hover { background: rgba(230,168,23,.15); }

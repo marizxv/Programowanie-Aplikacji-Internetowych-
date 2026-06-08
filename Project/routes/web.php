@@ -33,7 +33,12 @@ Route::middleware('checklogin')->group(function () {
     Route::get ('/diary', [DiaryController::class, 'index'])->name('diary.index');
     Route::post('/diary', [DiaryController::class, 'store'])->name('diary.store');
 
-    // panel administratora — TODO: dodac middleware checkadmin
-    Route::get('/admin/plant-types', [AdminController::class, 'plantTypes'])->name('admin.plant-types');
-    Route::get('/admin/users',       [AdminController::class, 'users'])->name('admin.users');
+    // panel administratora — wymaga roli admin
+    Route::middleware('checkadmin')->group(function () {
+        Route::get ('/admin/plant-types',         [AdminController::class, 'plantTypes'])->name('admin.plant-types');
+        Route::post('/admin/plant-types',         [AdminController::class, 'storePlantType'])->name('admin.plant-types.store');
+        Route::post('/admin/plant-types/toggle',  [AdminController::class, 'togglePlantType'])->name('admin.plant-types.toggle');
+        Route::get ('/admin/users',               [AdminController::class, 'users'])->name('admin.users');
+        Route::post('/admin/users/role',          [AdminController::class, 'updateUserRole'])->name('admin.users.role');
+    });
 });

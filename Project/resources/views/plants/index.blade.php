@@ -11,7 +11,7 @@
         #main { flex: 1 0 auto; }
         #footer { flex-shrink: 0; }
         #logo a { text-shadow: 0 2px 8px rgba(0,0,0,.3); }
-        #nav ul li a, #nav ul li button { color: #fff !important; text-shadow: 0 1px 4px rgba(0,0,0,.25); }
+        #nav ul li a, #nav ul li button { color: rgba(160, 174, 192, 0.8) !important; text-shadow: 0 1px 4px rgb(213, 253, 250); }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 1em; }
         .data-table th { background: #3fb1a3; color: #fff; padding: .7em 1.1em; text-align: left; }
         .data-table td { padding: .65em 1.1em; border-bottom: 1px solid rgba(0,0,0,.07); }
@@ -22,10 +22,27 @@
         .filter-bar { display:flex;gap:1em;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5em; }
         .filter-bar > div { display:flex;flex-direction:column;gap:.3em;flex:1;min-width:160px; }
         .filter-bar label { font-size:.78em;text-transform:uppercase;letter-spacing:.1em;opacity:.6; }
-        .filter-bar select, .filter-bar input[type=text] { margin: 0; }
+        .filter-bar select, .filter-bar input[type=text] { margin: 0; text-align: center; }
         .empty-state { text-align:center;padding:4em 1em;opacity:.5; }
         .empty-state .icon { font-size:3.5em;display:block;margin-bottom:.5em; }
         .page-actions { display:flex;justify-content:flex-end;margin-bottom:1em; }
+        .filter-btn {
+            display: inline-block !important;
+            width: auto !important;
+            min-width: 0 !important;
+            padding: .65em 1.4em !important;
+            border-radius: 4px; font-size: .85em; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .08em;
+            text-align: center;
+            cursor: pointer; white-space: nowrap;
+            text-decoration: none; line-height: 1;
+            border: 1px solid transparent;
+            font-family: inherit;
+        }
+        .filter-btn-primary { background: #3fb1a3; color: #fff; border-color: #3fb1a3; }
+        .filter-btn-primary:hover { background: #2a9d8f; }
+        .filter-btn-ghost   { background: none; color: inherit; border-color: rgba(0,0,0,.18); }
+        .filter-btn-ghost:hover { background: rgba(0,0,0,.04); }
     </style>
 </head>
 <body class="index">
@@ -84,7 +101,7 @@
                     </div>
                     <div style="flex:0;min-width:160px;">
                         <label>Typ rośliny</label>
-                        <select name="plant_type_id">
+                        <select name="plant_type_id" style="width:100%; text-align: center; text-align-last: center;">
                             <option value="">Wszystkie typy</option>
                             @foreach($plantTypes as $type)
                                 <option value="{{ $type['id'] }}"
@@ -94,13 +111,11 @@
                             @endforeach
                         </select>
                     </div>
-                    <div style="flex:0;align-items:flex-end;">
-                        <ul class="buttons" style="margin:0;">
-                            <li><input type="submit" class="special small" value="Filtruj" /></li>
-                            @if(!empty($search) || !empty($typeId))
-                                <li><a href="{{ route('plants.index') }}" class="button small">Wyczyść</a></li>
-                            @endif
-                        </ul>
+                    <div style="flex:0;align-items:flex-end;gap:.4em;">
+                        @if(!empty($search) || !empty($typeId))
+                            <a href="{{ route('plants.index') }}" class="filter-btn filter-btn-ghost">Wyczyść</a>
+                        @endif
+                        <button type="submit" class="filter-btn filter-btn-primary">Filtruj</button>
                     </div>
                 </div>
                 </form>

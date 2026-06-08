@@ -103,7 +103,7 @@ class PlantController extends Controller {
                     'notes' => $form->notes,
                 ]);
                 return redirect()->route('plants.index')
-                    ->with('infos', ['Roślina „'.$form->name.'\" dodana.']);
+                    ->with('infos', ['Roślina „'.$form->name.'” dodana.']); //jak ja wgl zrobilam rozne cudzslowy?
             }
         }
 
