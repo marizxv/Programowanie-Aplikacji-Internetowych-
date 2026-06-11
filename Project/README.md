@@ -49,9 +49,9 @@ personal diary enties.
 |---|---|---|---|
 | Browse public plant catalogue | O | O | O |
 | Register | O | X | X |
-| Add own plants | X | O | X |
-| Log watering / care entries | X | O | X |
-| View own plant diary | X | O | X |
+| Add own plants | X | O | O |
+| Log watering / care entries | X | O | O |
+| View own plant diary | X | O | O |
 | Manage plant types (catalogue) | X | X | O |
 | Manage users & roles | X | X | O |
 | Search & filter everything | O | O | O |
@@ -91,7 +91,8 @@ and three hours of my life I'd never get back.
 - [x] User: add / edit / delete their own plants
 - [x] User: log a care entry, view their diary, filter by date / action
 - [x] Admin UI: CRUD for plant types, user / role management (no more phpMyAdmin SQL gymnastics)
-- [ ] Admin *working* UI: connection to the database, actual user manipulation
+- [x] Admin *working* UI: connection to the database, actual user manipulation
 - [x] Search & filter on both the public catalogue and one's own diary
-- [x] Cosmetic: a home page that doesn't look like a placeholder.
+- [x] Cosmetic: a home page that doesn't look like a placeholder
+- [x] Pagination
 - [ ] Optional: a prettier filtrering

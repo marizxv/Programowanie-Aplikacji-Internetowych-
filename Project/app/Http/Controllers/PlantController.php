@@ -23,6 +23,15 @@ class PlantController extends Controller {
         if ($search) $where['plants.name[~]'] = $search;
         if ($typeId) $where['plants.plant_type_id'] = (int) $typeId;
 
+        //  paginacja
+        // count na samej tabeli 'plants' (filtry dotykaja tylko jej)
+        $perPage  = 6;
+        $page     = max(1, (int) $request->input('page', 1));
+        $total    = $db->count('plants', $where);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+        $page     = min($page, $lastPage);
+        $where['LIMIT'] = [($page - 1) * $perPage, $perPage];   // Medoo: [offset, ile]
+
         // JOIN z plant_types zeby dostac nazwe typu bez drugiego zapytania
         $plants = $db->select(
             'plants',
@@ -42,6 +51,8 @@ class PlantController extends Controller {
             'plantTypes' => $plantTypes,
             'search' => $search,
             'typeId' => $typeId,
+            'page' => $page,           // dane dla pagera
+            'lastPage' => $lastPage,
             'infos' => (array) session('infos', []),
             'errors' => [],
         ]);

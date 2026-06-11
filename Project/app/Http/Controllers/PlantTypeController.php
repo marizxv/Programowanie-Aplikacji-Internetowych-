@@ -25,6 +25,16 @@ class PlantTypeController extends Controller {
             $where['watering_interval_days[>=]'] = 7;
         }
 
+        // paginacja
+        // najpierw ile jest wszystkich pasujacych (dla ilosci stron)
+        // potem LIMIT do $where
+        $perPage  = 6;
+        $page     = max(1, (int) $request->input('page', 1));   // numer strony z ?page=
+        $total    = $db->count('plant_types', $where);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+        $page     = min($page, $lastPage);                      // nie wyjdz poza ostatnia strone
+        $where['LIMIT'] = [($page - 1) * $perPage, $perPage];   // Medoo: [offset, ile]
+
         $plantTypes = $db->select(
             'plant_types',
             ['id', 'name', 'description', 'watering_interval_days', 'is_active'],
@@ -36,6 +46,8 @@ class PlantTypeController extends Controller {
             'user' => $this->currentUser(),
             'search' => $search,
             'wateringFilter' => $wateringFilter,
+            'page' => $page,           // dane dla pagera
+            'lastPage' => $lastPage,
             'infos' => (array) session('infos', []),
         ]);
     }

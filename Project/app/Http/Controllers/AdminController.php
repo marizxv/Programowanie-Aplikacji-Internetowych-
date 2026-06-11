@@ -11,19 +11,32 @@ class AdminController extends Controller {
     // typy roslin — zarzadzanie
 
     // lista + formularz nowego typu
-    public function plantTypes() {
+    public function plantTypes(Request $request) {
         $user       = $this->currentUser();
         $db         = Database::getInstance();
+
+        $where = ['ORDER' => ['name' => 'ASC']];
+
+        // paginacja
+        $perPage  = 8;
+        $page     = max(1, (int) $request->input('page', 1));
+        $total    = $db->count('plant_types', $where);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+        $page     = min($page, $lastPage);
+        $where['LIMIT'] = [($page - 1) * $perPage, $perPage];   // Medoo: [offset, ile]
+
         $plantTypes = $db->select(
             'plant_types',
             ['id', 'name', 'description', 'watering_interval_days', 'is_active'],
-            ['ORDER' => ['name' => 'ASC']]
+            $where
         ) ?: [];
 
         return view('admin.plant-types', [
             'user'       => $user,
             'plantTypes' => $plantTypes,
             'form'       => new PlantTypeForm(),
+            'page'       => $page,        // dane dla pagera
+            'lastPage'   => $lastPage,
             'errors'     => (array) session('admin_errors', []),
             'infos'      => (array) session('infos', []),
         ]);
@@ -120,6 +133,15 @@ class AdminController extends Controller {
             $where['id'] = !empty($matching) ? $matching : [0];   // [0] = pusty wynik
         }
 
+        // paginacja
+        // count po samej tabeli 'users'
+        $perPage  = 6;
+        $page     = max(1, (int) $request->input('page', 1));
+        $total    = $db->count('users', $where);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+        $page     = min($page, $lastPage);
+        $where['LIMIT'] = [($page - 1) * $perPage, $perPage];   // Medoo: [offset, ile]
+
         $usersList = $db->select('users',
             ['id', 'nickname', 'email', 'created_at'],
             $where
@@ -148,6 +170,8 @@ class AdminController extends Controller {
             'roles'        => $roles,
             'search'       => $search,
             'filterRoleId' => $filterRoleId,
+            'page'         => $page,        // dane dla pagera
+            'lastPage'     => $lastPage,
             'errors'       => (array) session('admin_errors', []),
             'infos'        => (array) session('infos', []),
         ]);

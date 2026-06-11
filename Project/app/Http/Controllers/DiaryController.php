@@ -33,6 +33,15 @@ class DiaryController extends Controller {
         if ($filterFrom) $where['logged_at[>=]'] = $filterFrom . ' 00:00:00';
         if ($filterTo) $where['logged_at[<=]'] = $filterTo . ' 23:59:59';
 
+        // paginacja
+        // count MUSI miec JOIN, bo filtruje po plants.user_id (kolumna z dolaczonej tabeli)
+        $perPage  = 6;
+        $page     = max(1, (int) $request->input('page', 1));
+        $total    = $db->count('care_logs', ['[>]plants' => ['plant_id' => 'id']], 'care_logs.id', $where);
+        $lastPage = max(1, (int) ceil($total / $perPage));
+        $page     = min($page, $lastPage);
+        $where['LIMIT'] = [($page - 1) * $perPage, $perPage];   // Medoo: [offset, ile]
+
         $logs = $db->select(
             'care_logs',
             ['[>]plants' => ['plant_id' => 'id']],
@@ -52,6 +61,8 @@ class DiaryController extends Controller {
             'filterAction' => $filterAction,
             'filterFrom' => $filterFrom,
             'filterTo' => $filterTo,
+            'page' => $page,           // dane dla pagera
+            'lastPage' => $lastPage,
             'infos' => (array) session('infos', []),
             'errors' => (array) session('diary_errors', []),
         ]);

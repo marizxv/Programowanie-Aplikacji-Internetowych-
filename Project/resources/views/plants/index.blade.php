@@ -152,6 +152,27 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    {{-- PAGINACJA --}}
+                    @if($lastPage > 1)
+                        <nav style="display:flex;gap:1.2em;justify-content:center;align-items:center;margin-top:2.5em;">
+                            @if($page > 1)
+                                <a href="{{ request()->fullUrlWithQuery(['page' => $page - 1]) }}"
+                                   style="padding:.5em 1.1em;border:1px solid rgba(63,177,163,.5);border-radius:4px;color:#3fb1a3;text-decoration:none;font-size:.85em;">← Poprzednia</a>
+                            @else
+                                <span style="padding:.5em 1.1em;border:1px solid rgba(0,0,0,.1);border-radius:4px;color:rgba(0,0,0,.25);font-size:.85em;">← Poprzednia</span>
+                            @endif
+
+                            <span style="opacity:.6;font-size:.85em;">Strona {{ $page }} z {{ $lastPage }}</span>
+
+                            @if($page < $lastPage)
+                                <a href="{{ request()->fullUrlWithQuery(['page' => $page + 1]) }}"
+                                   style="padding:.5em 1.1em;border:1px solid rgba(63,177,163,.5);border-radius:4px;color:#3fb1a3;text-decoration:none;font-size:.85em;">Następna →</a>
+                            @else
+                                <span style="padding:.5em 1.1em;border:1px solid rgba(0,0,0,.1);border-radius:4px;color:rgba(0,0,0,.25);font-size:.85em;">Następna →</span>
+                            @endif
+                        </nav>
+                    @endif
                 @endif
 
             </div>
