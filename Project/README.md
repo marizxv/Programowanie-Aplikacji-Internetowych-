@@ -56,6 +56,9 @@ personal diary enties.
 | Manage users & roles | X | X | O |
 | Search & filter everything | O | O | O |
 
+ATTENTION! 
+
+Having considered Admin's hypothetical need for a personal garden, they now can have plans of their own too!
 
 
 
@@ -88,11 +91,12 @@ and three hours of my life I'd never get back.
 ## Todo list 
 ~~aka someone give me patience~~
 - [x] Public plant-type catalogue (read-only, visible to guests)
-- [x] User: add / edit / delete their own plants
+- [x] User: add / ~~edit / delete their own plants~~
 - [x] User: log a care entry, view their diary, filter by date / action
 - [x] Admin UI: CRUD for plant types, user / role management (no more phpMyAdmin SQL gymnastics)
 - [x] Admin *working* UI: connection to the database, actual user manipulation
 - [x] Search & filter on both the public catalogue and one's own diary
 - [x] Cosmetic: a home page that doesn't look like a placeholder
 - [x] Pagination
+- [x] Ajax
 - [ ] Optional: a prettier filtrering

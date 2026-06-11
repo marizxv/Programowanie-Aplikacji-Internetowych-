@@ -41,7 +41,7 @@ class PlantTypeController extends Controller {
             $where
         ) ?: [];
 
-        return view('catalogue', [
+        $data = [
             'plantTypes' => $plantTypes,
             'user' => $this->currentUser(),
             'search' => $search,
@@ -49,6 +49,14 @@ class PlantTypeController extends Controller {
             'page' => $page,           // dane dla pagera
             'lastPage' => $lastPage,
             'infos' => (array) session('infos', []),
-        ]);
+        ];
+
+        // AJAX
+        // oddaje SAM kawalek z wynikami, a nie caly HTML
+        if ($request->ajax()) {
+            return view('partials.catalogue-results', $data);
+        }
+
+        return view('catalogue', $data);
     }
 }

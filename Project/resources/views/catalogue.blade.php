@@ -105,7 +105,7 @@
             <div class="content">
 
                 {{-- pasek filtrów --}}
-                <form method="GET" action="{{ route('catalogue') }}">
+                <form method="GET" action="{{ route('catalogue') }}" id="filter-form">
                 <div class="filter-bar">
                     <div>
                         <label>Szukaj po nazwie</label>
@@ -126,68 +126,18 @@
                         </select>
                     </div>
                     <div style="flex:0;align-items:flex-end;gap:.4em;">
-                        @if(!empty($search) || !empty($wateringFilter))
-                            <a href="{{ route('catalogue') }}" class="filter-btn filter-btn-ghost">Wyczyść</a>
-                        @endif
+                        {{-- 'Wyczysc' zawsze widoczny: pasek filtra jest poza #ajax-results,
+                             wiec przy AJAX-ie warunek i tak by sie nie odswiezyl --}}
+                        <a href="{{ route('catalogue') }}" class="filter-btn filter-btn-ghost">Wyczyść</a>
                         <button type="submit" class="filter-btn filter-btn-primary">Szukaj</button>
                     </div>
                 </div>
                 </form>
 
-                @if(empty($plantTypes))
-                    <div class="empty-state">
-                        <span class="icon solid fa-leaf"></span>
-                        <p>Brak typów roślin w katalogu.<br>Administrator musi je najpierw dodać.</p>
-                    </div>
-                @else
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Typ rośliny</th>
-                                <th>Opis</th>
-                                <th style="white-space:nowrap;">Podlewanie co</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($plantTypes as $pt)
-                            <tr>
-                                <td>
-                                    <span class="icon solid fa-leaf" style="color:#3fb1a3;margin-right:.4em;"></span>
-                                    <strong>{{ $pt['name'] }}</strong>
-                                </td>
-                                <td style="opacity:.75;">{{ $pt['description'] ?? '—' }}</td>
-                                <td>
-                                    <span class="watering-badge">
-                                        {{ $pt['watering_interval_days'] }}
-                                        {{ $pt['watering_interval_days'] == 1 ? 'dzień' : 'dni' }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-                    {{-- PAGINACJA --}}
-                    @if($lastPage > 1)
-                        <nav style="display:flex;gap:1.2em;justify-content:center;align-items:center;margin-top:2.5em;">
-                            @if($page > 1)
-                                <a href="{{ request()->fullUrlWithQuery(['page' => $page - 1]) }}"
-                                   style="padding:.5em 1.1em;border:1px solid rgba(63,177,163,.5);border-radius:4px;color:#3fb1a3;text-decoration:none;font-size:.85em;">← Poprzednia</a>
-                            @else
-                                <span style="padding:.5em 1.1em;border:1px solid rgba(0,0,0,.1);border-radius:4px;color:rgba(0,0,0,.25);font-size:.85em;">← Poprzednia</span>
-                            @endif
-
-                            <span style="opacity:.6;font-size:.85em;">Strona {{ $page }} z {{ $lastPage }}</span>
-
-                            @if($page < $lastPage)
-                                <a href="{{ request()->fullUrlWithQuery(['page' => $page + 1]) }}"
-                                   style="padding:.5em 1.1em;border:1px solid rgba(63,177,163,.5);border-radius:4px;color:#3fb1a3;text-decoration:none;font-size:.85em;">Następna →</a>
-                            @else
-                                <span style="padding:.5em 1.1em;border:1px solid rgba(0,0,0,.1);border-radius:4px;color:rgba(0,0,0,.25);font-size:.85em;">Następna →</span>
-                            @endif
-                        </nav>
-                    @endif
-                @endif
+                {{-- wyniki ladowane TEZ przez AJAX — JS podmienia tylko ten kontener --}}
+                <div id="ajax-results">
+                    @include('partials.catalogue-results')
+                </div>
 
             </div>
         </section>
@@ -200,5 +150,40 @@
         </ul>
     </footer>
 </div>
+
+{{-- AJAX: filtr i paginacja bez przeladowania calej strony.
+     Pobiera SAM fragment z wynikami i podmienia zawartosc #ajax-results. --}}
+<script>
+(function () {
+    const form = document.getElementById('filter-form');
+    const box  = document.getElementById('ajax-results');
+    if (!form || !box) return;
+
+    async function load(url) {
+        try {
+            const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            box.innerHTML = await res.text();
+            window.history.pushState({}, '', url);
+        } catch (err) {
+            window.location = url;              // awaryjnie: zwykle przeladowanie
+        }
+    }
+
+    // 1) szukanie / filtrowanie : przejmujemy wyslanie formularza
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const qs = new URLSearchParams(new FormData(form)).toString();
+        load(window.location.pathname + '?' + qs);
+    });
+
+    // 2) klikniecia w paginacje : linki sa w srodku kontenera, wiec delegacja zdarzen
+    box.addEventListener('click', function (e) {
+        const link = e.target.closest('a[href]');
+        if (!link) return;
+        e.preventDefault();
+        load(link.href);
+    });
+})();
+</script>
 </body>
 </html>
